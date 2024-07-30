@@ -1,0 +1,96 @@
+Dom
+<!--
+Dom:document object model
+     ECMAScript(js核心)+DOM+BOM
+         框架的出现让Dom 不再变成核心
+    属性名只有名字没有值，证明这个是boolean值，ex：disable
+    拿到所有样式的值，内部加外部
+         var cssStyle=document.defaultView.getComputedStyle(element,null)
+         var bottom=css.bottom//style里面button的值
+增
+     增加元素
+         1.创建元素 document.createElement("tagname")
+         2.将元素添加到页面中 parent.appendChild(child)
+           n1.textContent=name;
+
+         
+删
+     删内容//innerText=“” innerHTML=“”
+     删属性//removeAttribute("class")
+     删元素//父元素对象.removeChild("子元素对象")
+      
+改
+     改属性
+         通过对象的形式 //box.style.color="blue"
+         setAttribute("attributeName","abc")// box.setAttribute("class","boxes")
+         getAttribute("attributeName")
+     改内容
+         innerText//返回的是元素开始标签到结束标签之中的文本内容//赋值为修改
+         innerHTML//返回的是元素开始标签到结束标签之中的内容//赋值可以用“<div class="a">hello</div>”
+         
+查 查找元素
+     元素对象属性：所有写在元素标签开始之中的
+         class是一个关键字
+         var a=document.getElementById()//通过id找到元素
+             a.id="red"//即使之后更改id/getelementbyid找到的元素不会变，因为之前已经找到了   
+             a.className="abc"//因为不能和class类 重名
+     document.getElementById()//对象
+     document.getElementsByClassName() //类似数组值可用[index]，有数组的外形没有数组的方法，因为class可以重名
+     document.querySelector(css选择器)//元素对象
+     document.querySelectorAll(css选择器)//类数组
+     document.getElementsByName()//类数组
+     document.getElementsByTagName(tagname)//类数组
+
+事件
+    元素对象.事件名=函数名
+     onClick
+     onmouseover
+     onmouseout
+     onmousemove
+     onkeydown//按下去的时候
+         search.onkeydown(function(e){
+            if(e.keyCode==13){
+                console.log("enter")
+            }
+         })//input中敲回车执行
+     onkeyup//松开时
+     onkeypress//正在按着时
+     onfocus()//获得焦点
+         search.onfocus=function(){
+            console.log("获得焦 点了")
+         }
+     onblur//失去焦点了
+     onchange//改变的时候
+     oninput//
+         search.oninput=function(){
+            console.log(search.value)
+         }
+-->
+
+<!-- The core of this problem is familiar with DOM API, and there are few I used:
+
+Create
+
+document.createElement(tagName)
+document.createTextNode(tagName)
+Add
+
+node.append(childNode)
+node.classList.add(className)
+Set
+
+node.setAttribute(name, value)
+Check
+
+node.hasChildNodes()
+node.hasAttributes()
+Get
+
+node.childNodes
+node.tagName
+node.attributes // {0: {name: xxx, value: xxx}, 1: {name: xxx, value: xxx}...}
+NodeType
+
+node.nodeType == 1 // element node
+node.nodeType == 2 // attribute node
+node.nodeType == 3 // text node -->

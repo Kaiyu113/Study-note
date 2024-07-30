@@ -1,0 +1,493 @@
+Overview
+<!-- 
+
+----Introductions (5 minutes)
+    dont spend much time on this. it mainly a technical interview. use 30 secoend introduce yourself
+        Hey im Kaiyu, I am a SWE @ Wells Fargo. I work on the Payment Systems mostly with frontend.
+    two-minus pitch.
+        I am currently a software engineer at Wells Fargo. 
+        In college, I studied social media at Otis College of Art and Design, where we mastered software such as After Effects, 
+        which also involved coding. This exposure sparked my interest in coding, leading me to join a coding bootcamp 
+        while completing my bachelor's degree. Subsequently, I worked with several startups for two years before joining Wells Fargo.
+        In my current role, I primarily focus on building and maintaining the codebase for various components. 
+        Outside of work, I am concurrently pursuing a master's degree in computer science Asynchronously. 
+        hobbie, hackarthon, dance past work
+----Coding (35 minutes)
+    option1: An easy question then a medium question 
+        (the easy question is often used as a warm up and you should not focus all your time on that one).
+    option2: One question then adding a new constraint or requirement on to that problem as the second question. This is more of the exception and not the rule, so try to anticipate having 2 questions.
+
+    It’s totally fair to ask the interviewer which structure you should expect.
+    You can ask the interviewer how many questions or how the interview will be set up before you start
+----Answering Your Questions (5 minutes)
+    Take this brief opportunity to learn more about working at Facebook from an engineer's point of view. 
+    Think about what you find interesting and challenging about the work you'd be doing here or what challenges you're most interested in solving.
+ -->
+Approach Coding Problems-what would you do in work?
+<!-- 
+    
+Before you code
+        never rush in to code before you fully understand what you will do 
+        wait until you're ready to code and interview is ready
+    ask questions
+        Ask Clarifying Question if you dont have one just repeast, make sure you understand
+    draw examples(large/avoid special cases): 
+        input and output
+    make approprite assumptions
+        In english describe algorithm, psuedo-code write it down Start with brute force then optimize
+        if hard: first using bruteforce/what is the space and time complecity. then optimize
+        if easy: Present multiple potential solutions, if possible. Talk through which solutionyou’re choosing and why.
+        Talk about it, if you know O(n) say it, otherwise dont
+    Walk through the algo.
+        draw trees
+        index math！！
+        datastructure & when they change
+        helper function
+
+Write Code (trasnfer your english to code, as your coding speak out loud)
+    Syntax error big no
+    good styling/name style and space
+    think about error cases and boundary checks
+    Can we use language build-in functions for the data structures, for example sort array? you have know the time complecity of the build-in function
+    make up a "build-in function", if nessaccery. ask at end "do you want me write this max functions?"
+    Write structure code from top down. filling in the next most interested piece of code first, you don't have time to fill in every detail
+    ignore the thing that show bad signal(expect interviwer show bad signal)
+        Don’t forget to talk! While your tech screen will focus heavily on coding, the
+        engineer you’re interviewing with will also be evaluating your thought process.
+        Explaining your decisions and actions as you go will help the interviewer
+        understand your choices.
+        • Be flexible. Some problems have elegant solutions, and some must be
+        brute forced. If you get stuck, just describe your best approach and ask the
+        interviewer if you should go that route. It’s much better to have non-optimal
+        but working code than just an idea with nothing written down.
+        • Iterate rather than immediately trying to jump to the clever solution. If you
+        can’t explain your concept clearly in five minutes, it’s probably too complex.
+        • Consider (and be prepared to talk about):
+        • Different algorithms and algorithmic techniques, such as sorting, divideand-conquer, recursion, etc.
+        • Data structures, particularly those used most often (array, stack/queue,
+        hashset/hashmap/hashtable/dictionary, tree/binary tree, heap, graph, etc.)
+        • O memory constraints on the complexity of the algorithm you’re writing
+        and its running time as expressed by big-O notation.
+        • Generally, avoid solutions with lots of edge cases or huge if/else if/else
+        blocks, in most cases. Deciding between iteration and recursion can be an
+        important step.
+
+        correctness
+        readability
+        maintainbility
+        performance
+
+After you code
+    consider code coverage test in edge case. manually test and explain line by line
+    high risk
+        Math, moving index, parameter when call recursion, double check base cases
+    task cases
+        small test cases
+        edge test cases
+            boring/interesting
+        big test cases
+    common mistake
+        verify the algorithm, not code
+        keep thinking when you walk through, stop by all the wrong values
+    fix
+        quick sloppy fixes
+        • Expect questions. The interviewer may tweak the problem a bit to test your
+        knowledge and see if you can come up with another answer and/or further
+        optimize your solution.
+        • Take the interviewer’s hints to improve your code. If the interviewer makes
+        a suggestion or asks a question, listen fully so you can incorporate any hints
+        they may provide.
+        • Ask yourself if you would approve your solution as part of your codebase.
+        Explain your answer to your interviewer. Make sure your solution is correct
+        and efficient, that you’ve -taken into account edge cases, and that it clearly
+        reflects the ideas you’re trying to express in your code
+    Security, user data concerns, compliance
+    Scalability, will this work with 5,000,000 requests a second?
+
+    in the end of interview ask career growth and grow another level do team nested what
+    you favorate thing about the culture in the meta
+
+conmmunication
+    See if any topic excites them. then go into that.
+    Drive through problem
+    show your thought process
+    ask question
+        is the data sorted?
+        is the tree balanced?
+        can I modify the array?
+        what I should return?
+    listen
+        suggestions/make sure you capture the hints
+        follow your interviewer path
+    be open about mistakes
+
+red flag
+     jump in the question directly without clarify and understand the questions
+     not communicate w interviewer at all
+     not apply the hints and advice from the interviewer
+     you can use pen and paper to caculate. but ask interviwer first.
+ -->
+BQ
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate
+-->
+Big O
+<!-- 
+    find the best conceivable runtime, and explain it
+Time
+        O(log n)
+            binary search
+        O(n log n)
+            dont have to go through all the node
+            sort((a,b)=>a-b)
+        O(n)
+            for i n times {
+                // loop n times 
+            }
+        On^2 
+            for i n times{
+                for j n times{  }
+            }
+        O(A*B)
+            for i A times{
+                for j B times{  }
+            }  
+
+        recursion
+        bfs
+        O(howmanybracheachnodehave^heightofthetree)
+        O(n), where n is the number of nodes in the tree.
+        dfs
+        O(height)
+        O(n), where n is the number of nodes in the tree.
+
+Space 
+        O1: Algorithms that use a fixed amount of memory regardless of the input size
+            Iterative algorithms with a constant number of variables, such as linear search, binary search, 
+            or finding the maximum element in an array using a single variable.
+        On: Algorithms that use memory linearly proportional to the input size.
+            Algorithms that use additional arrays or data structures whose size grows linearly with the input size, 
+            such as merging two sorted arrays into a new array.
+        On2: Algorithms that use memory proportional to the square of the input size.
+            Algorithms that use nested arrays or data structures resulting in quadratic memory usage, 
+            such as generating Pascal's triangle.
+
+
+ -->
+Array
+<!-- 
+    length
+    toString()
+    reverse()//On
+    indexOf() // On
+    slice()//不会改原数组//截取arr，含头不含尾 只有一个index的话就是从start截到末尾
+    join(”链接符“)//把数组拼接成字符串/不会改原数组
+    concat()//两个数组合并成一个数组
+    map(function(数组里的每一项，index，arr当前数组){})//对数组每一项进行处理，然后返回数组(不会更改长度)
+    every(function(item){})//检测数组是否都符合条件，返回值为false和true
+    some(function(){})//检测数组是否有值符合条件，返回true false
+    filter(function(item){})//返回那些是符合的
+    forEach(function(item){})//当并不想改变数据，只是需要数组里每个值都参与运算的话，
+    includes(“值”)//检测数组是否包含这个值/返回true false
+    
+    ----以下所有方法都可以修改原数组-----
+    push()//向数组结尾添加数据
+    unshift()//向数组开头添加数据
+    pop()//删除数组最后一个元素/返回值为删掉的对象
+    shift()//删除数组第一元素
+    splice(从哪一位开始删，删几个，要加的新值，要加的新值)//删除 替换 添加//O(n)
+    reserse()//反转数组
+    sort()//排序 是按照编码排的，不是按普通大小 
+-->
+String
+<!-- 
+         length
+         toUpperCase()//转大写，改完需要存新值。不会更改原来字符串
+         toLowerCase()//转小写
+         substring(startindex,endindex)//截取字符串，含头不含尾 只有一个index的话就是从start截到末尾
+         slice()//同上，原本是用来截数组的
+         indexOf("str")//查找关键字的index 默认只找第一个/找不到 返回-1
+         split(“切割符号”)//切割字符串，结果为arr/如果有两个连续的字符只切割一个会有空字符
+number
+         toString()//转换为字符串
+-->
+Hash Table
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate 
+-->
+Search
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate 
+-->
+Sorting
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate 
+-->
+recursion
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate 
+-->
+stack
+<!-- 
+    abstract data types used in computer science to organize and store data.
+Last In First Out
+-->
+queue
+<!-- 
+First-In-First-Out 
+-->
+map
+<!-- 
+Map is a built-in data structure that allows you to store key-value pairs
+const myMap = new Map();
+myMap.set(key1, value1);
+const value = myMap.get(key);
+const hasKey = myMap.has(key);//check if it have
+myMap.delete(key);
+const size = myMap.size;
+-->
+tree
+<!-- 
+
+A balanced tree
+     is a type of binary tree in which the height of the two subtrees of any node never differs by more than one
+     This ensures that the tree remains relatively balanced, which in turn helps to keep search, insertion, and deletion operations efficient.
+
+A binary search tree (BST) 
+     is a type of binary tree data structure that has the following properties:
+         two child nodes
+         or any node n, all nodes in the left subtree of n have values less than n, and all nodes in the right subtree of n have values greater than n. 
+        use in order traverse
+
+BFS
+    base case
+    BFS（Breadth-First Search）
+        function bfs(root) {
+            const queue = [root];
+            const result = [];
+
+            while (queue.length > 0) {
+                const currentNode = queue.shift();
+                result.push(currentNode.value);
+
+                for (const child of currentNode.children) {
+                queue.push(child);
+                }
+            }
+
+            return result;
+        }
+        层序遍历
+        var levelOrder = function(root) {
+            if (root == null) return [];
+            const ans = [];
+            let level = 0;
+            const queue = [root];
+            while(queue.length) {
+                ans.push([]);
+                const len = queue.length;
+                // 通过遍历，提前执行完一层的所有元素，层级level就可以+1
+                for (let i = 0; i < len; i++) {
+                    const node = queue.shift();
+                    ans[level].push(node.val);
+                    node.left && queue.push(node.left);
+                    node.right && queue.push(node.right);
+                }
+                level++;
+            }
+            return ans;
+            };
+
+    DFS (pre-order)
+//preorder：[root，...leftChildren, ...rightChildren]
+//        1
+//    2        5
+// 3    4    6     7
+        function dfsPreOrder(root) {
+            const result = [];
+
+            function traverse(node) {
+                result.push(node.value);
+                for (const child of node.children) {
+                traverse(child);
+                }
+            }
+
+            traverse(root);
+            return result;
+        }
+        var rangeSumBST = function(root, low, high) {
+            if (!root) {
+                return 0;
+            }
+
+            const currentVal = (root.val >= low && root.val <= high) ? root.val : 0;
+
+            const leftSum = rangeSumBST(root.left, low, high);
+            const rightSum = rangeSumBST(root.right, low, high);
+
+            return currentVal + leftSum + rightSum;
+        };
+    DFS (in-order)  
+// inorder：[...leftChildren, root，...rightChildren]
+//        4
+//    2        6
+// 1    3    5     7
+        function inOrderTraversal(root) {
+            const result = [];
+
+            function traverse(node) {
+                if (node) {
+                    traverse(node.left);
+                    result.push(node.val);
+                    traverse(node.right);
+                }
+            }
+
+            traverse(root);
+            return result;
+        }
+    DFS (post-order)
+// postorder：[...leftChildren, ...rightChildren, root]
+//        7
+//    3        6
+// 1    2    4     5
+        function dfsPostOrder(root) {
+            const result = [];
+
+            function traverse(node) {
+                for (const child of node.children) {
+                traverse(child);
+                }
+                result.push(node.value);
+            }
+
+            traverse(root);
+            return result;
+        }
+DFS 
+
+-->
+Heap
+<!--
+specialized binary tree-based data structure
+Max heap:
+    the parent nodes are greater than or equal to their child nodes. The root node is the maximum element in the heap.
+
+Min heap:
+    the parent nodes are smaller than or equal to their child nodes. The root node is the minimum element in the heap.
+-->
+Graph
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate 
+Topological Sort
+    a directed graph is a linear ordering of its vertices such that for every directed edge
+-->
+Greedy
+<!-- 
+be passionate
+be knowledgeable
+be a good teammate 
+-->
+
+algorithm
+<!-- 
+Array&Hash
+Two pointer
+    双指针定位
+Rolling hash
+Slide Window
+    初始化慢指针 = 0
+    初始化 ans
+
+    for 快指针 in 可迭代集合
+    更新窗口内信息
+    while 窗口内不符合题意
+        扩展或者收缩窗口
+        慢指针移动
+    更新答案
+    返回 ans
+Stack
+Binary Search
+    while(left<=right){
+        const mid=left+Math.floor((right-left)/2);
+        if(nums[mid]>=target) right=mid-1
+        else left=mid+1;
+    }
+//left = the index of the first ele
+
+    while(left<=right){
+        const mid=left+Math.floor((right-left)/2);
+        if(nums[mid]>target) right=mid-1
+        else left=mid+1;
+    }
+//right= the index of the last ele
+
+
+Linked List
+    //loop
+    function loopLinkedList(list) {
+        let current = list.head;
+        while (current) {
+            console.log(current.data);
+            current = current.next;
+        }
+    }
+    Adjacency List: for check every connection in the graph
+Tries
+    Tries are useful for tasks like autocomplete, spell checking, 
+    and dictionary implementations because they can efficiently store and retrieve strings, 
+    particularly when there are many common prefixes among the words.
+Priority Queue
+Backtracking
+    time On factorial n的阶乘
+    space On
+Graphs
+Union Find
+Dynamic Programming
+Greedy
+Intervels
+    Math.max(start1,start2)<Math.min(end1,end2)
+    start < date[1] && end > date[0]
+Math&Geometry
+Bit Manipulation
+quickSort
+    pivot: left right mid
+    Average Onlogn, worst case 0n2
+            function quickSort(arr)
+                if length of arr <= 1
+                    return arr 
+
+                pivot = arr[length of arr / 2]
+                left = empty array
+                right = empty array
+
+                for each element in arr (excluding pivot)
+                    if element index ==pivot index continue;
+                    if element < pivot
+                        append element to left
+                    else
+                        append element to right
+
+                return concatenate(quickSort(left), pivot, quickSort(right))
+    time：O(nlogn) in the average case and O(n2)in the worst case.
+    space: O(logn) in the best and average cases, and O(n) in the worst case.
+Merge Sort
+    
+cumulative sum 
+    [1,3,5,6,2]
+    {1:0,4:1,9:2,15:3,17:4}
+    to get the range then random /Math.floor(Math.random() * this.sum)  loop which range it is then /make dictionary/ this && function.protptype.function
+ -->

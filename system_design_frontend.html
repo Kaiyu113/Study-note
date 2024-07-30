@@ -1,0 +1,295 @@
+Facebook News Feed
+<!-- 
+    Requirement
+        General requirement
+        Specific requirement
+    Component Architecture
+    Data Model
+    Data Model
+    Data Store
+    Infinite scroll
+    Optimization
+    Accessiblity
+ -->
+Requirement
+<!-- 
+General requirement
+    infinit Scrollable news feeds where stories appears based on user subscribtion
+    user can share story
+    user can post story and attach comment and images and video
+
+Specific requirement
+    We want the feature access by range of device
+    We want the feature to be accesible for people with disabilities
+ -->
+Component Architechture
+<!-- 
+    Start with a simply UI
+    Individual Story component: icon+personal information(name/address), Content(text/image), Control Panel(like, repost, comment)
+    Comment list: Icon, comment, comment like, comment input for current user
+                   New Feed
+                     Story
+Story Card        Comment List      Comment Input
+                    Comment
+-->
+Data Model
+<!-- 
+    Story:{
+        id: number,
+        comments: comment[],
+        media: Media[],
+        Date: number,
+        Content: String
+        origin:{
+            userName:
+            id:
+            type:
+            ..data
+        }
+    }
+    comment:{
+        id: number,
+        author: comment,
+        media: Media,
+        Date: number,
+        Content: String
+    }
+    Media:{
+        type: "link"|| "vedio"
+        url: string
+    }
+ -->
+Api Model
+<!-- 
+           Http1                                      Http2
+     limit connection                               multiplexing
+     sync block queue                            multi connection
+     return plain text                            return rich media
+explicity need o close the connection             parallel request
+     1TCP send one data                         1TCP send multiple data
+                                        compress better, fast connection overall
+
+    
+    1. getPost(api_ke//provide the access for the Api, user_id, excludeComments//flag If dont want comment,timestamp//curosr, pageSize, minId//minimal id we want to fetch)
+    2. creatPost(api_key, user_id, post_data)
+    3. creatComment(api_key, user_id, post_id, comment_data)
+    4. subscribeNewStories
+     API protocol(we can choose one from those two)
+        REST/polling/long polling
+            more scalable, rest of http archtecture like caching technique by default
+            pro:easy load balance/simple/HTTP2 compatibility
+            con:longer latency/connection timeout/traffic overhead
+        GRAPHQL
+            good for multilevel data, we can easily select what client need,manager the cache by itself
+            pro:mordern API/easy load balance/pull the data you need/HTTP2 compatiblity/type safe
+            con:longer latency/connection timeout/traffic overhead
+        WebSockets
+            pro:bidirectional communication/speed real time/single TCP connection
+            con:harder to load balance/resourse intensive(because it not http request)/Firewall issue(because it not http request)
+            usecase:chat
+        SSE(Server Side Event)
+            pro:http2/efficent/easy load balance
+            con:undirectional/limited data type,mainly text/server to client convo only/hard to use
+
+
+ -->
+Data Store
+<!-- 
+                  New Feed//fetching point => put and orgnize(flatten the data, we don't want multi layer data) the data in store
+                    Story
+                     |feed_id
+         |feed_entity   |comments            
+Story Card        Comment List      Comment Input
+                        |comment
+                   Comment 
+
+Store:{
+    app:{
+        user:User,
+        setting: UserSetting
+        feed:Feed
+    }
+    Feed:{
+        Items:List[FeedItem],
+        page:int,
+        size:int
+    },
+    FeedItem:{
+        type:FeedItemType,
+        createDate:String,
+        author:User,
+        content:FeedItemContent
+        comments:List[FeedItemComment]
+    }
+    User:{
+        name:string,
+        ...
+    },
+    userSetting:{
+        timeZone:string,
+        AccessibilityPerf:{},
+        ...
+    }
+    FeedItemContent:{
+        Title:StyledText,//can contain @ mentions, contain links
+        Body:StyledText,
+        Media:Media
+    }
+    Media:{[feed_id]: media},
+    entityStore:{[feed_id]: entity},
+    commentStore{[feed_id]: cm},
+}
+
+Edge Case
+    Load new story
+        Long polling    
+            setInterval, fetch new story every 20 sec
+                //Traffic overhead,because long polling is a //full request
+                // longer latency,espacially for mobile which use he network cells
+        Web-sockets
+                //bidirectional data transferring very fast in real time//full request
+                //not support http2 protocol
+        server side event
+                //we subscribe for the events on the server, get udpate in a binary format
+                //work under  HTTP protocol
+                //fast speed, only load the piece we need in binary format//we can parse it very easily without overhead
+                //easy to load balance relatively to websocks
+                //latency compare to websockets is only 60milliseconds which is fine for us
+
+-->
+Infinite scroll
+<!-- 
+iff rech the sentinel call api load more//when fetching, creat affect of loading
+    Top sentinel
+        10 stories
+    bottom sentinel
+ -->
+Optimization
+<!-- 
+    Network Perfermence/Network layer
+        Compression headers: Algorithms used to reduce the size of files transmitted over the network
+            Gzip || brottle(newer/google created):
+            compression algorithms used to reduce the size of files transmitted over the network, thereby improving network performance and optimizing frontend system design.
+        Image optimization   
+            Webp || png
+                image: if the browser support webp use webp
+                place holder: show the loader, make a psychological suggestion for user about time files faster
+                lazy load
+                image microservice in backend:pull compressed image by fixed size
+                    story < = optimized imgae= image optimize service < = image url+viewport = story
+                CDN: cache these image inside enter the caching CDN insert this from the CDN
+        Switch to HTTP2
+            Multiplexing
+                solve the problem in HTTP1,which have five connections at max.
+                can load hundreds of resources in parallel
+        Bundle Splitting
+                Lasy load: split as Feed, Header, Vendor Libraries, Analystics Scripts
+                    we can simplify the loading process, we can load all the resources at once
+        Caching Strategies
+                both server and client can cache some date make it more prefermance
+                    Apollo caching, buildin graphql: if receiving same request,set a time like 1hr 
+                    batch request/group request if possible: example, collect all the tracking the cache and send it once
+                    
+    Rendering Perf
+        Mbile Friendly
+            media queries CSS+responsive
+        Prevent race condition in your code(concurrent request)
+            example: stock trading, large data flow, make sure the data is correct
+            avoice duplication
+        application Cache
+            smart caching strategies, local storage, session storage, cookie
+        Providing SSR(server-side-rendering) for some pages
+            next.js
+            prerender some feeds(css, images),so we don't block whole rendering
+        Handle loading/success/Error state
+            psychologically change how time files
+        Inline critical styles/Script
+            serve inside html first  
+        Load scripts async || defer non-critical resource
+            focus on above folder content first
+            so they do not block initial render
+                CSS class naming strategy
+        CSS class naming strategy
+            have multi-level selectors is not good
+        TTI-Time to interact
+            FCP first content paint
+            log network request start and end
+            log when component rendered with data
+            it ready to use
+        Tree shaking
+            eliminated dead code
+            remove unused bundles
+        Virtualization
+            no Long list, replace the nodes rather than adding new ones
+
+        
+    Javascript Perf
+        do less stuff
+        do stuff async
+        cache result
+            if we have heavy stuff
+        web workers
+            cache the whole stuff for heavy weight job
+
+        PWA mode(flight mode)
+            Service Worker & Application Cache
+                feed.js
+                feed.css
+                Story Data
+                Image   
+        rate limit
+            Debounce/throttle
+  -->
+Accessiblity & Security
+<!-- 
+      Support different color schema - for people with color blindness
+      All inputs and textareas and other elements should have aria-label
+      Internationalization
+      Napkin Math
+      Image also need to have alt atributes
+
+      Rem font size, more responsive
+      cross device testing for compatibility
+      proper contrast for 
+      Keybroad navigation
+      HTML5 sematic tag
+
+
+      Hot Keys:
+        New Story
+        Post Story
+        Scroll Down
+        Scroll top
+        Call for help
+        Return to main menu
+        Sharing options
+
+Security
+    Cors can only access from specific domin
+    rate limiting
+    XSS： bad people inject their own javascript in you webpage
+ -->
+Design Pattern
+<!-- 
+    MVC model-view-controller
+	singleton
+	functional
+	oop 
+-->
+Tool
+<!-- Next js
+Simplify the router
+Serverside rendering 
+Automatic Code Splitting bundle 
+API Routes 
+-->
+Software Development Life Cycle (SDLC)
+<!-- 
+    1. Requirement analysis
+	2. Design
+	3. Implementation (coding)
+	4. Testing
+	5. Documentation (reference & API)
+	6. Deployment
+	7. Maintaining
+ -->

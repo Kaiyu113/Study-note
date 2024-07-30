@@ -1,0 +1,49 @@
+<!-- 
+Binary Search Tree(BST)
+-A binary search tree is a binary tree in which all the children nodes on the left subtree of a root node (which is the first node at the top of the tree) have lesser values, and all the children nodes on the right subtree of a root node have greater values.
+Lowest common ancestor (LCA) 
+Breadth First Search(BFS)
+Depth First Search(DFS)
+
+-->
+Traverse BST
+<!-- 
+Preorder Traversal
+    function preorderTraversal(node) {
+        if (node === null) {
+            return;
+        }
+        
+        console.log(node.value); // Visit the node
+        
+        preorderTraversal(node.left); // Traverse the left subtree
+        
+        preorderTraversal(node.right); // Traverse the right subtree
+    }
+
+Inorder Tranversal
+    function inorderTraversal(node) {
+        if (node === null) {
+            return;
+        }
+        
+        inorderTraversal(node.left); // Traverse the left subtree
+        
+        console.log(node.value); // Visit the node
+        
+        inorderTraversal(node.right); // Traverse the right subtree
+    }
+    
+Postorder Tranversal
+    function postorderTraversal(node) {
+        if (node === null) {
+            return;
+        }
+        
+        postorderTraversal(node.left); // Traverse the left subtree
+        
+        postorderTraversal(node.right); // Traverse the right subtree
+        
+        console.log(node.value); // Visit the node
+    } 
+-->

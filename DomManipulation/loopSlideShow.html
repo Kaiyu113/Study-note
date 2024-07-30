@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="left()">left</button>
+    <ul class="nav">
+      <li class="myli" id="list_a" onclick="displaySelect()">1</li>
+      <li class="myli" id="list_b" onclick="displaySelect()">2</li>
+      <li class="myli" id="list_c" onclick="displaySelect()">3</li>
+    </ul>
+    <button onclick="right()">right</button>
+    <div id="displayText"></div>
+    <script language="JavaScript">
+      const items_list = [1, 2, 3, 4, 5];
+
+      const myli = document.getElementsByClassName("myli");
+      //let arrIndex = 0;
+      document.getElementById("displayText").innerHTML = "None Selected";
+
+      // function indexCal() {
+      //   let a, b, c;
+      //   a =
+      //     arrIndex < 0
+      //       ? arrIndex %  items_list.length === -0
+      //         ? 0
+      //         : (arrIndex %  items_list.length) +  items_list.length
+      //       : arrIndex %  items_list.length;
+      //   b =
+      //     arrIndex + 1 < 0
+      //       ? (arrIndex + 1) %  items_list.length === -0
+      //         ? 0
+      //         : ((arrIndex + 1) %  items_list.length) +  items_list.length
+      //       : (arrIndex + 1) %  items_list.length;
+      //   c =
+      //     arrIndex + 2 < 0
+      //       ? (arrIndex + 2) %  items_list.length === -0
+      //         ? 0
+      //         : ((arrIndex + 2) %  items_list.length) +  items_list.length
+      //       : (arrIndex + 2) %  items_list.length;
+      //   myli[0].innerHTML =  items_list[a];
+      //   myli[1].innerHTML =  items_list[b];
+      //   myli[2].innerHTML =  items_list[c];
+      // }
+      let i1 = 0,
+        i2 = 1,
+        i3 = 2;
+      //q3
+      // let cur = 0;
+      // let next = 1;
+      // let last = 2;
+      function left() {
+        //mod
+        // arrIndex--;
+        // indexCal();
+        //brutal way
+        i1 = i1 === 0 ? items_list.length - 1 : i1 - 1;
+        i2 =
+          i1 + 1 > items_list.length - 1 ? i1 - items_list.length + 1 : i1 + 1;
+        i3 =
+          i1 + 2 > items_list.length - 1 ? i1 - items_list.length + 2 : i1 + 2;
+
+        myli[0].innerHTML = items_list[i1];
+        myli[1].innerHTML = items_list[i2];
+        myli[2].innerHTML = items_list[i3];
+      }
+
+      function right() {
+        i1 = i1 === items_list.length - 1 ? 0 : i1 + 1;
+        i2 =
+          i1 + 1 > items_list.length - 1 ? i1 - items_list.length + 1 : i1 + 1;
+        i3 =
+          i1 + 2 > items_list.length - 1 ? i1 - items_list.length + 2 : i1 + 2;
+
+        myli[0].innerHTML = items_list[i1];
+        myli[1].innerHTML = items_list[i2];
+        myli[2].innerHTML = items_list[i3];
+        //mod
+        //arrIndex++;
+        //indexCal();
+        //brutal way
+        // arrIndex++;
+        // if (arrIndex ===  items_list.length) {
+        //   arrIndex = 0;
+        //   i1 = arrIndex;
+        //   i2 = i1 + 1;
+        //   i3 = i2 + 1;
+        // }
+        // if (arrIndex + 2 >  items_list.length - 1) {
+        //   i3 = arrIndex + 2 -  items_list.length;
+        //   i2 = arrIndex + 1 >=  items_list.length ? i3 - 1 : arrIndex + 1;
+        //   i1 = arrIndex;
+        // } else {
+        //   (i1 = arrIndex), (i2 = i1 + 1), (i3 = i2 + 1);
+        // }
+        // myli[0].innerHTML =  items_list[i1];
+        // myli[1].innerHTML =  items_list[i2];
+        // myli[2].innerHTML =  items_list[i3];
+        //a3
+        // if (cur ===  items_list.length - 1) {
+        //   cur = 0;
+        // } else {
+        //   cur++;
+        // }
+        // next = cur + 1 >  items_list.length - 1 ? cur + 1 -  items_list.length : cur + 1;
+        // last = cur + 2 >  items_list.length - 1 ? cur + 2 -  items_list.length : cur + 2;
+        // document.getElementById("list_a").innerHTML =  items_list[cur];
+        // document.getElementById("list_b").innerHTML =  items_list[next];
+        // document.getElementById("list_c").innerHTML =  items_list[last];
+      }
+      function displaySelect() {
+        const value = event.srcElement.innerHTML;
+        document.getElementById("displayText").innerHTML =
+          "You have select " + value + " element";
+      }
+    </script>
+  </body>
+</html>
