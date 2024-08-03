@@ -1,18 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <!--
+ <!--
+    css selector
+        CSS selectors are patterns used to select elements within an HTML document so that you can apply styles to them.
+            1. Universal Selector (*)
+                * {
+                margin: 0;
+                padding: 0;
+                }
+            2. Type Selector
+                Selects all elements of a given type.
+                p {
+                font-size: 16px;
+                }
+            3. Class Selector (.classname)
+                Selects all elements with a specified class.
+                .button {
+                background-color: blue;
+                color: white;
+                }
+            4. ID Selector (#idname)
+                #header {
+                background-color: grey;
+                }
+            5. Attribute Selector
+                Selects elements based on the presence or value of a specific attribute.
+                input[type="text"] {
+                border: 1px solid #ccc;
+                }
+            6. Descendant Selector (E F)
+                Selects elements that are descendants of another element.
+                div p {
+                color: green;
+                }
+            7. Child Selector (E > F)
+                ul > li {
+                list-style: none;
+                }
+            8. Adjacent Sibling Selector (E + F)
+                Selects an element that is immediately preceded by another element.
+                h1 + p {
+                margin-top: 0;
+                }
+            9. General Sibling Selector (E ~ F)
+                h1 ~ p {
+                color: grey;
+                }
+            10. Pseudo-class Selector
+                Selects elements based on their state or position.
+
+                a:hover {
+                color: red;
+                }
+
+                :first-child — Selects the first child of a parent.
+                li:first-child {
+                font-weight: bold;
+                }
+
+                :nth-child(n) — Selects the nth child of a parent.
+                li:nth-child(2) {
+                color: blue;
+                }
+            11. Pseudo-element Selector
+                Selects a part of an element.
+                ::before — Inserts content before the content of an element.
+                ::after — Inserts content after the content of an element.
+                ::first-line — Selects the first line of text.
+                ::first-letter — Selects the first letter of text.
+                p::before {
+                content: "Note: ";
+                font-weight: bold;
+                }
+                p::after {
+                content: " [End of paragraph]";
+                }
+            12. Grouping Selector
+                Groups multiple selectors to apply the same styles to all of them.
+                h1, h2, h3 {
+                font-family: Arial, sans-serif;
+                }
     rank
         !important
     center item
         flexbox
-             父元素
+            父元素
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,6 +93,8 @@
             margin: auto 
         transfrom(会脱离文档流)
             position: absolute;//把position设置为absolute；使其脱离文档流
+                Writing Banner Text on an Image
+                To overlay banner text on an image, you can use CSS positioning. The basic idea is to place the image and the text inside a container and use absolute positioning to place the text over the image.
             //把位置放在中间
             top: 50%;
             left: 50%;
@@ -99,8 +171,74 @@
             opacity: 1;
         }
         }
+    Box Model
+        Content - The content of the box, where text and images appear
+        Padding - Clears an area around the content. The padding is transparent
+        Border - A border that goes around the padding and content
+        Margin - Clears an area outside the border. The margin is transparent
 
 
 -->
-  </body>
-</html>
+critical css
+<!-- 
+     CSS required to render the above-the-fold content (i.e., the part of the webpage visible without scrolling) 
+     By prioritizing this CSS, you can improve page load times and enhance the user experience. 
+how to extract
+     using browser developer tools or tools like Chrome’s Coverage tab. to check css coverage
+webpack plugin 
+-->
+HTML
+<!-- 
+sematic html 
+            meaningful tag like
+                <hearder/><nav/><table/>
+ARIA 
+    use when no sematic tag can fit. provides additional semantic meaning to HTML elements
+    It's a set of attributes you can add to HTML elements to make web content and web applications more accessible,
+differ/async attribute in <script/>
+    asnyc
+        the script is fetched asynchronously and executed as soon as it is available.\
+            Use async when: The script is independent and doesn’t rely on other scripts or affect other scripts
+    differ
+        script is fetched asynchronously but is executed only after the HTML parsing is complete.
+            Use defer when: The script relies on other scripts or must be executed in a specific order.
+CLS: Cumulative Layout Shift
+     which is a metric used to measure visual stability in web pages. 
+     fix
+        Specify Size for Images and Videos
+        Reserve Space for Ads, Embeds, and iFrames
+-->
+display
+<!-- 
+display
+none: The element is not displayed and does not take up any space in the layout.
+block: The element is displayed as a block, taking up the full width available. It starts on a new line.
+inline: The element is displayed inline, taking up only as much width as necessary. It does not start on a new line.
+inline-block: The element is displayed as an inline element, but it behaves like a block element. It does not start on a new line, but you can set width and height.
+flex: The element becomes a flexible container with a flex layout. Its children become flex items.
+grid: The element becomes a grid container, and its children become grid items.
+    grid
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto;
+    }
+    .grid-item {
+        padding: 20px;
+        text-align: center;
+    }
+    <div class="grid-container">
+        <div class="grid-item">1</div>
+        <div class="grid-item">2</div>
+        <div class="grid-item">3</div>  
+        <div class="grid-item">4</div>
+        <div class="grid-item">5</div>
+        <div class="grid-item">6</div>  
+    </div>
+inline-flex: Similar to flex, but the element itself is inline.
+inline-grid: Similar to grid, but the element itself is inline.
+table: The element behaves like a <table> element.
+inline-table: The element behaves like an inline <table>.
+list-item: The element behaves like a <li> element, which is typically used inside lists.
+
+
+   -->

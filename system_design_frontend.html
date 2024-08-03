@@ -171,13 +171,20 @@ Optimization
             Gzip || brottle(newer/google created):
             compression algorithms used to reduce the size of files transmitted over the network, thereby improving network performance and optimizing frontend system design.
         Image optimization   
-            Webp || png
-                image: if the browser support webp use webp
+            size matter
+                dimension minimum
+            compression & image optimization
+                less color data, it will look less vibrate
+            webp 
+                if the browser support webp use webp
                 place holder: show the loader, make a psychological suggestion for user about time files faster
-                lazy load
-                image microservice in backend:pull compressed image by fixed size
+            lazy load
+            image microservice in backend:pull compressed image by fixed size
                     story < = optimized imgae= image optimize service < = image url+viewport = story
-                CDN: cache these image inside enter the caching CDN insert this from the CDN
+            CDN: content delivery network ex: aws cloud front/couldfare
+                get the asset from the most closer location, to reduce the latency
+                cache these image inside enter the caching CDN insert this from the CDN
+                srcSet ship different images depending on the device
         Switch to HTTP2
             Multiplexing
                 solve the problem in HTTP1,which have five connections at max.
@@ -193,6 +200,9 @@ Optimization
     Rendering Perf
         Mbile Friendly
             media queries CSS+responsive
+            Flexible Images and Media
+            Using Responsive Frameworks
+            Responsive Typography & image
         Prevent race condition in your code(concurrent request)
             example: stock trading, large data flow, make sure the data is correct
             avoice duplication
@@ -240,8 +250,12 @@ Optimization
         rate limit
             Debounce/throttle
   -->
-Accessiblity & Security
+Accessibility & Security
 <!-- 
+        ARIA Roles and Properties
+        Keyboard Navigation
+        Focus Management
+        Descriptive Labels
       Support different color schema - for people with color blindness
       All inputs and textareas and other elements should have aria-label
       Internationalization
@@ -268,21 +282,87 @@ Security
     Cors can only access from specific domin
     rate limiting
     XSS： bad people inject their own javascript in you webpage
+        sanitize input: remove js to send to the database
+        never render html/js from userdatabase
  -->
-Design Pattern
+Design Pattern 
 <!-- 
-    MVC model-view-controller
-	singleton
-	functional
-	oop 
+Creational Patterns/object creation mechanisms.
+    Singleton
+        Ensures a class has only one instance and provides a global point of access to that instance.
+            Example: A configuration manager class that loads settings only once and provides global access.
+    Factory 
+        Defines an interface for creating objects, but lets subclasses alter the type of objects that will be created.
+            Example: A shape factory that can create instances of different shapes like circles, squares, etc.
+    Abstract Factory
+        Provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+            Example: A UI toolkit that can create consistent widgets for different operating systems (Windows, macOS).
+    Builder
+        Separates the construction of a complex object from its representation, allowing the same construction process to create different representations.
+            Example: A meal builder in a restaurant system that can construct different types of meals (vegetarian, non-vegetarian).
+    Prototype
+        Allows cloning of objects, even complex ones, without coupling to their specific classes.
+            Example: A graphic design software that clones a shape or an object.
+Structural Patterns/deal with object composition or the structure of classes.
+    Adapter
+        Allows incompatible interfaces to work together by wrapping an existing class with a new interface.
+            Example: A legacy payment processing system integrated with a modern payment gateway.
+    Bridge: 
+        Decouples an abstraction from its implementation, allowing the two to vary independently.
+            Example: A remote control system that can work with different devices like TVs, audio systems.
+    Composite
+        Composes objects into tree structures to represent part-whole hierarchies, allowing clients to treat individual objects and compositions uniformly.
+            Example: A file system where files and directories are treated uniformly.
+    Decorator:
+        Adds behavior to objects dynamically without affecting the behavior of other objects from the same class.
+            Example: Adding different types of borders to a text box in a UI.
+    Facade: 
+        Provides a simplified interface to a complex subsystem.
+            Example: A single interface for a complex library system that manages books, patrons, and loans.
+    Flyweight: 
+        Reduces memory consumption by sharing as much data as possible with similar objects.
+            Example: A text editor that uses flyweight objects for character styling.
+    Proxy: 
+        Provides a surrogate or placeholder for another object to control access to it.
+            Example: A security proxy that checks permissions before allowing access to a resource.
+Behavioral Patterns/These patterns deal with communication between objects.
+    Chain of Responsibility: 
+        Passes a request along a chain of handlers, allowing any handler to process the request.
+            Example: A logging system where logs are passed through multiple handlers (e.g., console, file, database).
+    Command: 
+        Encapsulates a request as an object, allowing for parameterization and queuing of requests.
+            Example: A text editor where each operation (cut, copy, paste) is represented as a command.
+    Interpreter: 
+        Defines a grammatical representation for a language and an interpreter to interpret sentences in the language.
+            Example: A simple calculator that interprets and evaluates mathematical expressions.
+    Iterator: 
+        Provides a way to access elements of a collection without exposing its underlying representation.
+            Example: Iterating over a list or array in a collection framework.
+    Mediator: 
+        Reduces direct communication between objects by having them communicate through a mediator.
+            Example: A chat room that manages communication between users.
+    Memento: 
+        Captures and externalizes an object's internal state so that it can be restored later.
+            Example: Undo functionality in text editors.
+    Observer: 
+        Defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified.
+            Example: A subscription service where subscribers are notified of updates.
+    State: 
+        Allows an object to alter its behavior when its internal state changes.
+            Example: A traffic light system that changes behavior based on its state (green, yellow, red).
+    Strategy: 
+        Defines a family of algorithms, encapsulates each one, and makes them interchangeable.
+            Example: A sorting algorithm where different strategies (bubble sort, quick sort) can be used interchangeably.
+    Template Method: 
+        Defines the skeleton of an algorithm, deferring some steps to subclasses.
+            Example: An application framework where specific steps can be customized by subclassing.
+    Visitor: 
+        Separates an algorithm from the object structure it operates on, allowing new operations to be added without modifying the structure.
+            Example: A file system where different operations (e.g., calculate size, check permissions) can be performed on files and directories.
+
 -->
-Tool
-<!-- Next js
-Simplify the router
-Serverside rendering 
-Automatic Code Splitting bundle 
-API Routes 
--->
+OOD
+<!-- ... -->
 Software Development Life Cycle (SDLC)
 <!-- 
     1. Requirement analysis
@@ -293,3 +373,147 @@ Software Development Life Cycle (SDLC)
 	6. Deployment
 	7. Maintaining
  -->
+storage
+<!-- 
+cookie storage
+    4kb
+    both server and client side: can share token and authenticate info
+local storage
+    persisted forever
+    application state
+session
+    temp: tab browser window
+    form input and so on -->
+webpack || vite : 
+<!-- build tools clientside rendering performance
+    polyfill
+        look for different of browser and support fill in, for example if don't have promise, it will ass promise in your code
+    compression
+            javascript file to gzip file
+                increase loading time
+            uglify minification
+                replace long name to short
+            source map
+                debug, find the source in production 
+    codde splitting
+        lazyloading:
+-->
+maintain code quality in large scale codebase
+<!-- 
+    linting:check for protencial error
+        perettier: format
+        a11y: all users, including those with disabilities, can effectively use and navigate your website or application
+    unitest 
+    dependcy scan
+    lighthouse: check prefermence after your code change
+-->
+Micro frontend
+<!-- 
+pro: sapreate frontend team and front end component to different domain, and you can deploy it sepreate. fast pace
+con: you need large scale
+    hard to manage
+-->
+other
+<!-- 
+Essential state
+    minimum set of state required txo determine the UI's output.
+Derived state 
+    information that can be computed from the essential state. 
+
+PWA (Progressive Web App)
+    web application that uses modern web technologies and design patterns to deliver a user experience comparable to native apps.
+        Offline Capabilities
+        App-like Experience: with smooth animations and navigation.
+        Responsiveness: work on a variety of devices and screen sizes.
+        Installation: Users can "install" a PWA to their home screen
+        Push Notifications: similar to native apps.
+    Example: STARBUCK, PINTEREST,TINDER
+CRM (Customer Relationship Management)
+    Customer Data Management: Centralized storage and management of customer information.
+    Sales Automation: Tools to streamline sales processes, track leads, and manage pipelines.
+    Marketing Automation: Features for managing marketing campaigns, segmenting customers, and automating repetitive tasks.
+    Customer Service: Tools for managing customer support tickets, live chat, and service inquiries.
+    Analytics and Reporting: Capabilities to generate reports and analyze data for better decision-making
+    -->
+HTTP
+<!-- 
+1. GET
+    Retrieve data from a server.
+    Safe: Yes, as it does not modify any resources.
+2. POST
+    Usage: Used to send data to the server to create/update a resource. It often results in a change on the server, such as creating a new record.
+    Safe: No, it modifies resources on the server.
+3. PUT
+    Used to send data to the server to update a resource. It typically replaces the entire content of the resource.
+    Safe: No, as it modifies resources.
+4. PATCH
+    Similar to PUT, but used when only a partial update is needed, rather than replacing the entire resource.
+    Safe: No, as it modifies resources.
+5. DELETE
+    Used to delete a resource identified by a URL.
+    Safe: No, as it removes resources.
+ -->
+framework& api
+<!-- 
+Angular: 
+    Best suited for large-scale enterprise applications where a comprehensive, opinionated framework with built-in features is beneficial.
+React: 
+    Ideal for applications that require flexibility and performance optimization. React’s component-based architecture and extensive ecosystem offer great power and adaptability.
+Vue.js: 
+    Great for projects needing a balance of simplicity and functionality. Vue’s progressive framework approach and easy learning curve make it suitable for a wide range of applications.
+Next js
+    Simplify the router
+    Serverside rendering 
+    Automatic Code Splitting bundle 
+    API Routes 
+
+Observable Lifecycle:
+Creation: Observables are created using functions provided by reactive libraries like RxJS.
+Subscription: Observers subscribe to observables to receive the emitted values or events.
+Unsubscription: Observers can unsubscribe to stop receiving values and clean up resources.
+    -->
+Testing
+<!-- 
+Unit Tests
+    Single unit/component in isolation
+    Verify the correctness of individual unit
+    Uses mocks/stubs to isolate the unit being tested
+    Fine-grained, focusing on small code units
+    Tests specific functionalities or logic
+    Generally fast
+
+
+Integration Tests
+    Interaction between multiple components or systems
+    Ensure integrated components work together correctly
+    Tests real interactions between components or systems
+    Coarse-grained, focusing on larger portions or end-to-end functionality
+    Generally slower due to external dependencies
+    Tests overall system integration and workflows 
+-->
+JS & TS
+<!-- 
+JavaScript 
+    is a flexible, dynamically typed language that is universally used for web development. 
+    It’s easy to start with but can lead to challenges in maintaining larger codebases due to its lack of type safety and runtime error detection.
+TypeScript 
+    builds on JavaScript by adding static types, 
+    improving code quality, maintainability, and developer experience. 
+    It requires an additional compilation step but provides better tooling and error checking.
+-->
+internet basic
+<!--
+url type browser? 
+	1. Request a record from computer’s local DNS cache
+	2. The browser checks the cache for a DNS record to find the corresponding IP address of maps.google.com.
+    3. If the requested URL is not in the cache, ISP’s DNS server initiates a DNS query to find the IP address of the server that hosts maps.google.com.
+    4. The browser initiates a TCP connection with the server.
+    5. The browser sends an HTTP request to the webserver.
+    6. The server handles the request and sends back a response.
+    7. The server sends out an HTTP response.
+    8. The browser displays the HTML content (for HTML responses, which is the most common). 
+Browser render pages
+	1.	The DOM and CSSDOM trees are combined to form the render tree
+	2.	Layout computes the exact position and size of each object
+	3.	paint: color, transition, scale, anything that is not related to layout 
+-->

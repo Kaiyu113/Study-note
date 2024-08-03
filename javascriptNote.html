@@ -6,7 +6,29 @@
      赋值
      a=10
      从右到左读赋值语句
-     变量提升：自动提升到作用域的最顶部
+     变量提升 hoisting ：自动提升到作用域的最顶部
+        var b = 1;
+        function outer(){
+            var b = 2//2
+            function inner(){//4
+                b++;undefined
+                console.log(b)//b=NaN
+                var b = 3//b will variable hoisting
+                console.log(b)//b=3
+            }
+            inner();//3
+        }
+        outer();//1
+        Output to the console will be  NaN “3”.
+        Since the inner closure has a b variable of its own, that is what will be output.
+        Furthermore, due to hoisting the code in inner will be interpreted as follows:
+        function inner () {‍‌‌‍‌‍‍‍‍‌‍‍‍‌‌‌‍‍‌‍
+            var b; // b is undefined
+            b++; // b is NaN
+            console.log(b) // output "NaN"
+            b = 3; // b is 3
+            console.log(b); // output "3"
+        }
      对于给未声明的变量赋值，js会在全局作用域给这个变量申明
      var a=[1,2,3]
      var b=a //引用传递 复制的是一个指针
@@ -153,6 +175,7 @@ pen_spark
          filter(function(item){})//返回那些是符合的
          forEach(function(item){})//当并不想改变数据，只是需要数组里每个值都参与运算的话，//return inside for each will not exit the outter function
          includes(“值”)//检测数组是否包含这个值/返回true false
+         find(function(item){})
          
          ----以下所有方法都可以修改原数组-----
          push()//向数组结尾添加数据
@@ -162,6 +185,7 @@ pen_spark
          splice(从哪一位开始删，删几个，要加的新值，要加的新值)//删除 替换 添加
          reserse()//反转数组
          sort()//排序 是按照编码排的，不是按普通大小
+            data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     3.Math
          round()四舍五入取整
@@ -426,6 +450,15 @@ this
 this:代表一个对象，指向会变，
      代表的是函数运行时所在的对象（谁调用了我这个函数，那么我函数中的this就指向谁）
      console.log(this)//windows:最大的对象 
+    
+     用来主动改变this指向
+    call 传参数 
+        funtion.call(obj,pere1,pere2,pere3)
+    apply 
+        function.apply(obj,[array,array])
+    bind 返回一个函数，需要主动调用，参数调用的时候放在括号里
+        var a=function.bind(obj)
+        a(pere1,pere2)
 -->
 定时器
 <!-- 
@@ -681,6 +714,22 @@ ECMAscript+dom+bom
              import 中途改名字  {a as newname}
              import {a},b from ""//默认导出不加大括号
              import "./文件名"//不需要到处，直接引进比如说import "./style.css"
+         Dynamic imports 
+                Performance Optimization: Load code only when it's needed.
+                allow you to load modules on-demand rather than at the initial page load.
+                    document.getElementById('loadButton').addEventListener('click', () => {
+                    import('./myModule.js')
+                        .then(module => {
+                        // Use the module here
+                        module.myFunction();
+                        })
+                        .catch(error => {
+                        console.error('Error loading module:', error);
+                        });
+                    });
+                    Differences from Static Imports
+                        Loading Time
+                        Error Handling: Dynamic imports allow you to handle errors in case the module fails to load, while static imports do not provide built-in error handling.
          export default a 如果import不管import名字叫什么都是a// export default 1 === export {1 as default}
      class类
          地位在react地位在逐年降低//如果想当架构师必须会
