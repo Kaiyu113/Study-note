@@ -5,6 +5,7 @@
     dfa 
     virtual dom: is a object,they have unique key for every element
         it more lightweight than real dom
+        perfermence issue, everything have to go throught the vitual dom 
     JSX
          ：javascript XML
              XML一种传输方法
@@ -383,7 +384,7 @@ React,memo
     })
     React. memo is a higher-order component to memoize an entire functional component. useMemo is a react hook to memoize a function within a functional component.
 useMemo
-    useMemo is a React Hook that lets you cache the result of a calculation/functionresult between re-renders.
+    The useMemo hook in React is used to memoize a computed value, preventing unnecessary recalculations on re-renders. It is particularly useful when you have a computationally expensive calculation or want to prevent rendering when specific dependencies haven't changed.
     useMemo will calls its function and return the result
     const visibleTodos = useMemo(
     () => filterTodos(todos, tab),//()=>calculation function
@@ -605,6 +606,31 @@ Error Boundary
         )
     }
 -->
+React Developer Tools
+<!-- 
+It allows you to inspect the React component hierarchies in 
+Component Hierarchy Inspection:
+
+The React DevTools displays a tree of React components, making it easy to navigate through the component hierarchy. You can click on any component to view its details.
+Props and State Inspection:
+
+For the selected component, you can inspect its props, state, and context values. This is useful for understanding how data flows through your application and diagnosing issues.
+Performance Profiling:
+
+The Profiler tab allows you to record performance information for your React application. It shows you which components are rendering, how long they take, and helps identify performance bottlenecks.
+Hooks Inspection:
+
+For components that use React hooks, the React DevTools can display the current state of each hook, making it easier to debug issues related to state management.
+Component Source Code Navigation:
+
+You can easily jump to the source code of a component by clicking on the "View source" button. This feature integrates with your editor (if set up) for a seamless workflow.
+Context Inspection:
+
+If your application uses the Context API, React DevTools can display the current context values and the components consuming them.
+Component Update Tracking:
+
+You can observe when a component re-renders and why, which is useful for identifying unnecessary re-renders and optimizing performanc
+-->
 Other
 <!-- 
     The key prop in React
@@ -612,3 +638,4 @@ Other
         This helps React to optimize rendering performance and avoid unnecessary re-renders. 
         When you render a list of elements using the map function, React requires a unique identifier for each element to track changes effectively. 
 -->
+
