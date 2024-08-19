@@ -652,7 +652,7 @@ ECMAscript+dom+bom
          let [a,b,c]=[1,2,3]//左边存变量名 右边存值，只要两遍模式相同的话就是是对应是值
      字符串的扩展
          　``模版字符串支持换行，添加变量使用${变量}
-     函数的扩展
+     函数的扩展 
          默认参数：
             function fn(x=5，i=8){
                 //x默认值为5,i默认为8
@@ -789,6 +789,7 @@ Promise.race([p1,p2,p3]).then...//看谁快就执行谁
             setTimeout: 1.go to stack 2.send to the web API to count the seconds 3. push to the task queue
             本宏任务执行完之前（包括里面的微任务），不会执行下一个宏任务
          微任务Micro-task: promise.then nexTick
+         on-Blocking I/O: Node.js performs non-blocking I/O operations using the event loop. When an I/O operation (like a file read or a network request) is initiated, Node.js can continue executing other code without waiting for the operation to complete.
      stack:first-in first-out 
      queue:first-in first-out
      heap:
@@ -911,6 +912,45 @@ function fn(){
     console.log('end');//2
 }
 fn();   
+
+
+
+
+
+
+const fs = require('fs');
+const crypto = require('crypto');
+
+const start = Date.now();//data
+
+setTimeout(() => console.log('Timer 1 finished'), 0); // 2 = timequeue 1: add to the timer queue, which excute after the synchronous code
+
+fs.readFile('./test-file.txt', () => {// no-blocking IO: will read the file asyncly so it move to next
+  console.log('I/O finished'); //3
+  console.log('---------------------------------------------'); // 4
+
+  setTimeout(() => console.log('Timer 2 finished'), 0); // 6 timequeue 1
+  setTimeout(() => console.log('Timer 3 finished'), 3000); //11 timequeue 2
+  // setImmediate(() => console.log("Immediate 2 finished"));
+
+  process.nextTick(() => console.log('process nextTick finished')); // 5 microtask
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {}); 
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {});
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {});
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {});
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {  
+    setTimeout(() => console.log('Timer 4 finished'), 0); // 8 timequeue 2
+    process.nextTick(() => console.log('process nextTick 4 finished')); // 7 timequeue 2
+  });
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {});
+  crypto.pbkdf2('password', 'salt', 100000, 1024, 'sha512', () => {
+    setTimeout(() => console.log('Timer 5 finished'), 0); // 10 second round 10
+    process.nextTick(() => console.log('process nextTick 5 finished'));// 9 micro 6
+  });
+});
+
+console.log('Hello from the top level code'); //2
+
 -->
 A callback function is a concept in programming where a function is passed as an
 argument to another function. This passed-in function (the callback) is then
