@@ -1,5 +1,257 @@
-Facebook News Feed
+Basic
 <!-- 
+Kilobyte	1024 Bytes	
+Megabyte	1, 024 Kilobytes	
+Gigabyte	1, 024 Megabytes	
+Terabyte	1, 024 Gigabytes
+
+client -> load balancer -> application server
+                                        |
+                  aggregator server  aggregator server  aggregator server
+                /                       \                               \    \     \
+   file storage                 load balancer                            \       \         \
+              \               /         |        \                        \         \             \
+                cache server    cache server      cache server   <->     BD shard    BD shard ...  BD shard 
+-->
+General 
+<!-- 
+Scoping the problem: 
+    Don’t make assumptions; Ask clarifying questions to understand the constraints and use cases.
+        Define requirement
+            ● "Who are our users and what are their needs?""
+            ● "What is the exact scope of the problem we’re solving?"
+            ● Will users of our service be able to post and follow other people?
+            ● Should we also design to create and display user’s timeline?
+            ● Will posts contain photos and videos?
+            ● Are we focusing on back end only or are we developing front end too?
+            ● Will users be able to search posts?
+            ● Would there be any push notification for new (or important) posts?
+                Then we can determine:
+                    Functional requirements (what the system must do)
+                    Non-functional requirements (how it should perform: availability/consistency/latency) Stretch/Extended requirements
+                    Design questions are mostly open-ended, and they don’t have ONE correct answer, that’s why clarifying ambiguities early in the interview becomes critical.
+        Get a rough estimate of scale
+            It’s always a good idea to estimate the scale of the system you’re going to design. This would also help later when you’ll be focusing on scaling, partitioning, load balancing and caching.
+            ● What scale is expected from the system? Number of total users, number of daily active users, number of new posts, how many followers per user on average, etc.
+            ● How much storage would we need? We’ll have different numbers if users can have photos and videos in their posts.
+            ● What network bandwidth usage are we expecting? This would be crucial in deciding how would we manage traffic and balance load between servers.
+                Example:
+                    ● 1 billion total users
+                    ● 250 million Daily Active Users (DAU)
+                    ● 750 million new posts every day
+                    ● Each user has 200 followers (median)
+                Storage requirements: 
+                        each post = 280 characters     
+                        2 bytes to store a character without compression
+                        assume we need 30 bytes to store metadata with each post (like ID, timestamp, user ID, etc.).
+                    Total storage we would need:
+                        750m * (560 + 30) bytes => 412GB/day
+                    How many total post-views our system will generate? Let’s assume on average a user visits their timeline two times a day and visits five other people’s pages. On each page if a user sees 20 posts, total post-views our system will generate:
+                        250M DAU * ((2 + 5) * 20 posts) => 35B/day
+                    Bandwidth estimate:
+                        (35B * (560 + 30)bytes) / 86400s => 228MB/s
+                    Note: This kind of depth lends itself more to backend heavy roles. You don’t have to go this deep determining impacts of scale, but you can and doing so illustrates a deeper, more mature understanding of system design.
+                    
+Sketching up an abstract 
+        Mock out a basic UI
+        Define your data model
+            This is where the database(s) will be chosen, as well as block storage for things like photos and videos.
+            Defining the data model early will clarify how data will flow among different components of the system.
+            Later, it will guide towards data partitioning and management.
+                User
+                    UserId
+                    Name
+                    Email
+                    CreationDate
+                    LastLogin
+                    ...
+                Post
+                    PostId
+                    UserId
+                    Content
+                    PostLocation
+                    NumberOfLikes
+                    Timestamp
+                    ...
+                UserFollowers
+                    UserId
+                    FollowerId
+                    ...
+                FavoritePosts
+                    UserId
+                    PostId
+                    Timestamp
+        Define your APIs
+                postContent( userId, postData, postLocation, userLocation, timestamp, ...) 
+                viewTimeline( userId, userLocation, maxResult, ...)
+                likePost( userId, postId, postedUserId, ...)
+        High Level Design
+            Draw a block diagram with 5-6 boxes representing core components of your system.
+            You should identify enough components that are needed to solve the actual problem from end-to-end.
+            Think of this as sketching out your MVP.
+
+                database && file storage => Application server*n => load balancer => client
+
+                    *load balancer: distributes incoming network traffic across multiple servers 
+                        to ensure no single server becomes overwhelmed.
+                        it helps improve the availability, reliability, and scalability of an application
+        Detailed Design
+            Dig deeper into these high level components. 
+            Think through the challenges presented for each one. 
+            You should be able to provide different approaches, their pros and cons, and why would you choose one.
+            ● Since we’ll be storing a huge amount of data, 
+                how should we partition our data to distribute it to multiple databases? 
+                Should we try to store all the data of a user on the same database?
+                What issue can it cause?
+            ● How would we handle VIP users, who post a lot or follow lots of people?
+            ● Since user’s timeline will contain most recent (and relevant) posts, should we try to store our data in such a way that is optimized to scan latest posts?
+            ● How much and at which layer should we introduce caches to speed things up?
+            ● What components need better load balancing?
+
+
+
+
+Identifying and addressing the bottlenecks
+            Try to discuss as many bottlenecks as possible and different approaches to mitigate them.
+            ● Is there any single point of failure in our system? What are we doing to mitigate it?
+            ● Do we have enough replicas of the data so that if we lose a few servers, we can still serve
+            our users?
+            ● Similarly, do we have enough copies of different services running, such that a few failures
+            will not cause total system shutdown?
+            ● How are we monitoring the performance of our service? Do we get alerts whenever critical
+            components fail or their performance degrade?
+                check challenge break down
+    -->
+Challenge Break Down
+<!-- 
+Distributed System Tools Summary
+    ❖ Load Balancers
+        ➢ Distribution methods
+    ❖ Cache
+        ➢ Cache coherence/invalidation
+    ❖ Gateways
+        ➢ Decouples clients from internal services
+    ❖ Message Brokers
+        ➢ Fault tolerance via decoupling
+
+We need to handle many client connections and many requests from those clients without overwhelming a single server
+    Load Balancers
+        database*n && file storage => (load balancer) => Application server*n => (load balancer) => web server*n => (load balancer) => client
+            ● Load Balancing works to distribute load across multiple resources.
+            ● It also keeps track of the status of all the resources while distributing requests.
+            ● It can be utilized at various points throughout the system.
+            ● It can be achieved by ‘smart clients’, hardware, or hybrid software solutions
+
+We want to limit the number of times we’re fetching data
+    Caching
+            ● Load balancing helps you scale horizontally across an ever-increasing number of servers, 
+            but caching will enable you to make vastly better use of the resources you already have
+            ● Caches take advantage of a simple principle: recently requested data is likely to be requested again.
+            ● They are used in almost every layer of computing: hardware, operating systems, web browsers, web applications and more.
+    Cache Coherence
+            If the data is modified in the database, it should be invalidated in the cache, if not, this can cause inconsistent application behavior.
+            Solving this problem is known as cache invalidation, there are two basic writing schemes that are used:
+            1. Write-through cache: 
+                Under this scheme data is written into the cache and the corresponding database at the same time.
+            2. Write-back cache: 
+                Data is written to cache alone, and completion is immediately confirmed to the client. 
+                The write to the permanent storage is done later, after specified intervals or under certain conditions.
+
+We’ve got many types of clients (web/native) and our application handles many types of requests?
+How do we provide a simplified point of access for clients?
+        Gateway
+            Mobile Client  \              /  MicroService1
+                            API Gateway   -  MicroService2
+            Web Client     /              \  MicroService3
+
+        without the gateway:
+            Mobile Client       -  /  MicroService1
+                                \  /  MicroService2
+            Web Client          \  -  MicroService3
+
+        Pro: Clients don’t invoke specific services, they talk to the same gateway
+             Simplifies client API code
+             Reduce round trips per request
+        Con:
+             Deployment schedule of gateway possibly coupled to individual deployments of services
+
+We’ve got a distributed system and there are SO many messages going back and forth between servers on the network
+    Message Brokers (Queues)
+        Queues are used to effectively manage requests in a large-scale distributed system. 
+        They allow us to decouple our processes and distribute/throttle processing load
+
+Our clients are in-house and we need to set up a shared cache or monitor/restrict internet usage
+    Proxies
+    ● A proxy server is a piece of hardware/software that sits between the client(s) and the internet. 
+    It receives requests from clients and relays them to the back end servers over the internet.
+    ● Typically, proxies are used to filter or log requests, block sites, provide anonymity, etc.
+    ● Another advantage of a proxy server is that its cache can serve a lot of requests.
+
+    client  \
+    client  - proxy server -> web -> backend server
+    client  /
+
+We need to add security, efficiency, or high availability to our backend
+    Reverse Proxies
+        ● A reverse proxy server is a piece of hardware/software that 
+        typically sits between the internet and the back-end server. 
+        It receives requests from clients and relays them to the origin servers.
+        ● Typically, reverse proxies are used for 
+        load balancing, web acceleration via transforming requests (by adding/removing headers, encrypting/decrypting, or compression), and 
+        adding additional security for your back end servers.
+        ● Another advantage of a proxy server is that its cache can serve a lot of requests.
+
+            client  \
+            client  - proxy server -> web -> reverse proxies -> backend server
+            client  /
+
+Databases
+        Relational Database
+            Relational databases are structured and have predefined schemas
+            pro:
+                when You need to ensure ACID compliance. Your data is structured and unchanging.
+            con: 
+                less scalability and processing speed, 
+            eg. MySQL, PostgreSQL, and Oracle 
+                many e-commerce and financial applications an ACID-compliant database remains the preferred option.
+
+        Non-Relational Database
+            con:
+                unstructured, distributed and have a dynamic schema
+                sacrifice ACID compliance for scalability and processing speed, 
+            pro:
+                store large volumes of data that often require little to no structure
+                Making the most of cloud computing and storage for horizontal scaling.
+            eg. NoSQL is useful for rapid development as it doesn’t need to be prepped ahead of time.
+            Big data is contributing to a large success for NoSQL databases,
+            mainly because it handles data differently than the traditional relational databases. 
+            A few popular examples of 
+            NoSQL databases are MongoDB, CouchDB, Cassandra, and HBase.
+        Sharding
+            Data partitioning (also known as sharding) 
+                is a technique to break up a big database (DB) into many smaller parts. 
+                It is the process of splitting up a DB/table across multiple machines to improve the manageability, performance, availability and load balancing of an application.
+            Horizontal partitioning: 
+                splitting databases up along ranges of data 
+                (zip codes less than 10000 are stored in one instance while those above are stored in another)
+            Vertical partitioning: 
+                splitting across features 
+                (all image and video information is partitioned to one instance while user and follower data is on another)
+            Directory partitioning: 
+                A loosely coupled approach that abstracts away the partitioning scheme from the DB access code so the scheme can change without impacting your application.
+            Sharding does come with challenges around joins and referential integrity 
+            (you can’t enforce foreign keys across database instances)
+        Redundancy and Replication
+            ● Redundancy means duplication of critical data or services with the intention of increased reliability of the system.
+            ● Creating redundancy in a system can remove single points of failure and provide backups if needed in a crisis.
+
+        primary server -> failover -> secondary server
+        active data -> data replication ->mirrored data
+-->
+
+Facebook News Feed
+<!--
+    step by step
     Requirement
         General requirement
         Specific requirement
@@ -316,6 +568,8 @@ Security
     XSS： bad people inject their own javascript in you webpage
         sanitize input: remove js to send to the database
         never render html/js from userdatabase
+    security we do is data protection by encryption sensitive data between the client and server. 
+    On the Cyber Hygiene side, it is important to minimize the data in order to  minimized the data exposure. Input validation also important, we should only allowed sanitized data go to server side. If we not sanitize the data, it might be malicious script that attacker want to implant to server.
  -->
 Design Pattern 
 <!-- 
