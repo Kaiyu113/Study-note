@@ -1,6 +1,47 @@
 Basic
+ANSWER TEMPLATE:
 <!-- 
-Kilobyte	1024 Bytes	
+Scoping the problem: 
+    Functional:
+        WHAT USER CAN DO IN THE APP
+
+    Non-Functional:
+        SCALIABLILITY
+        FAST RESPONSE TIME& CONSISTENCY
+        SECURITY
+        ERROR CASE
+            Error handling would follow HTTP error code. For example, 4XX for client side error (e.g. liking a tweet ID that does not exist), 5XX for server side error (e.g. bug causing some of the APIs to fail). 
+            It would be important for client to handle too many requests error (429) correctly. For example, if home_feed() API returns 429, it would indicate the servers are too busy to service this potentially expensive call. Therefore, it would be advisable for the client to want for some time (say seconds) before calling this again.
+        loses network.
+
+    Capacity estimation
+        500M DAU
+        Peak traffic - 25M requests / sec
+        DAU 
+        PEAK TIME TRAFFIC
+        Scalability. We estimated 1GB of new data every day. In two years, and with some usage growth, it might reach 1TB of data. MongoDB's superior scalability would suit this well.
+        WHAT DATABASE? RELATIONAL OR NON-RELATIONAL
+        BOTTLENECK
+
+API design
+
+Database design
+
+High-level design
+
+Request flows
+
+Detailed component design
+
+Trade offs/Tech choices
+
+Failure scenarios/bottlenecks
+
+Future improvements 
+-->
+foundation
+<!-- 
+Kilobyte	1, 024 Bytes	
 Megabyte	1, 024 Kilobytes	
 Gigabyte	1, 024 Megabytes	
 Terabyte	1, 024 Gigabytes
@@ -12,6 +53,34 @@ client -> load balancer -> application server
    file storage                 load balancer                            \       \         \
               \               /         |        \                        \         \             \
                 cache server    cache server      cache server   <->     BD shard    BD shard ...  BD shard 
+
+fitness app: flowchart 
+    CLI[client] -> RL[Rate Limiter] //Rate limiting： is a strategy for limiting network traffic. It puts a cap on how often someone can repeat an action within a certain timeframe 
+    RL->LB[Load Balancer]
+    LB->WO[Workout Server]
+    LB->GOAL[Goal and User Server]
+    GOAL->DB[Mongo DB]
+    LB->DB[Mongo DB]
+    GOAL->CC[Redis Cache]
+    WO->CC[Redis Cache]
+    WO->MQ[Message Queue]
+    MQ->DH[Data Handler]
+    DH->DB
+flowchart TD
+    CL[client] -> CDN[CDN]
+    CDN -> RL[Rate Limiter]
+    RL -> LB[Load Balancer]
+    LB -tweet()-> TW[Tweet Service]
+    TW -Store-> DB[DB: MongoDB]
+    TW -> MQ[Message Queue]
+    TA[Tweet Analyzer] -Pull Message-> MQ
+    TA -Update->DB
+    CA[Content Analyzer] -Pull Message->MQ
+    LB -home_feed()-> Home[Home Feed Service]
+    Home -> DB
+    Home -> Cache[Redis Cache]
+    LB -like()->CT[Sharded Counter]
+    CT->DB
 -->
 General 
 <!-- 
@@ -148,6 +217,11 @@ We want to limit the number of times we’re fetching data
             but caching will enable you to make vastly better use of the resources you already have
             ● Caches take advantage of a simple principle: recently requested data is likely to be requested again.
             ● They are used in almost every layer of computing: hardware, operating systems, web browsers, web applications and more.
+            eg. redis
+            sharded counter service for users with more than, e.g., 1,000 followers. For such users, 
+            the sharded counter service would do the counting, using multiple (let's say 100) subcounters, 
+            stored in a high performance key-value store like Redis Cache.
+            Once in a while (say every 5 minutes or so), the service would write the number_of_likes in Tweet document.
     Cache Coherence
             If the data is modified in the database, it should be invalidated in the cache, if not, this can cause inconsistent application behavior.
             Solving this problem is known as cache invalidation, there are two basic writing schemes that are used:
@@ -179,6 +253,10 @@ We’ve got a distributed system and there are SO many messages going back and f
     Message Brokers (Queues)
         Queues are used to effectively manage requests in a large-scale distributed system. 
         They allow us to decouple our processes and distribute/throttle processing load
+        eg. when the server is write heavy, instead of writing directly to the database, 
+        it would push the events information to Message Queue. 
+        Data Handler pulls from Message Queue and persists events data to the database.
+        eg. kafka
 
 Our clients are in-house and we need to set up a shared cache or monitor/restrict internet usage
     Proxies
@@ -209,6 +287,7 @@ Databases
         Relational Database
             Relational databases are structured and have predefined schemas
             pro:
+                strong, immediate consistency. 
                 when You need to ensure ACID compliance. Your data is structured and unchanging.
             con: 
                 less scalability and processing speed, 
@@ -220,13 +299,19 @@ Databases
                 unstructured, distributed and have a dynamic schema
                 sacrifice ACID compliance for scalability and processing speed, 
             pro:
-                store large volumes of data that often require little to no structure
+                scalability and schema flexibility
                 Making the most of cloud computing and storage for horizontal scaling.
             eg. NoSQL is useful for rapid development as it doesn’t need to be prepped ahead of time.
             Big data is contributing to a large success for NoSQL databases,
             mainly because it handles data differently than the traditional relational databases. 
             A few popular examples of 
             NoSQL databases are MongoDB, CouchDB, Cassandra, and HBase.
+                mongo
+                    pro;schema flexibility and normalization,scalability
+                Cassandra
+                    wide-column database like Cassandra, scalability would even be better than MongoDB,
+                    the schema would be rigid, making feature enhancements difficult.
+
         Sharding
             Data partitioning (also known as sharding) 
                 is a technique to break up a big database (DB) into many smaller parts. 
@@ -253,15 +338,12 @@ Facebook News Feed
 <!--
     step by step
     Requirement
-        General requirement
-        Specific requirement
-    Component Architecture
-    Data Model
-    Data Model
-    Data Store
-    Infinite scroll
-    Optimization
-    Accessiblity
+        functional General requirement
+        non functional Specific requirement
+    High level Component Architecture
+    Data Model(Client)
+    API Model  
+    Optimization/Accessiblity
  -->
 Requirement
 <!-- 
@@ -327,27 +409,35 @@ explicity need o close the connection             parallel request
     3. creatComment(api_key, user_id, post_id, comment_data)
     4. subscribeNewStories
      API protocol(we can choose one from those two)
-        REST/polling/long polling
-            more scalable, rest of http archtecture like caching technique by default
-            pro:easy load balance/simple/HTTP2 compatibility
-            con:longer latency/connection timeout/traffic overhead
         GRAPHQL
             good for multilevel data, we can easily select what client need,manage the cache by itself
             pro:mordern API/easy load balance/pull the data you need/HTTP2 compatiblity/type safe
             con:longer latency/connection timeout/traffic overhead
+        SSE(Server Side Event)
+            banner notice
+            pro:http2/efficent/easy load balance
+            con:undirectional/limited data type,mainly text/server to client convo only/hard to use
         WebSockets
             pro:bidirectional communication/speed real time/single TCP connection
             con:harder to load balance/resourse intensive(because it not http request)/Firewall issue(because it not http request)
-            usecase:chat
-        SSE(Server Side Event)
-            pro:http2/efficent/easy load balance
-            con:undirectional/limited data type,mainly text/server to client convo only/hard to use
-
-
+            usecase:chat, real-time update, games
+        REST/polling/long polling
+            The client sends a request to the server, and the server holds the connection open until new data is available or the request times out. Once the client receives data, it immediately sends another request.
+            more scalable, rest of http archtecture like caching technique by default
+            pro:easy load balance/simple/HTTP2 compatibility
+            con:longerlatency/connection timeout/traffic overhead
+        Short Polling
+            The client sends requests to the server at regular intervals, typically every few seconds, 
+            to check if there’s any new data. 
+            Pros: Easy to implement/Doesn’t require a persistent connection
+            Cons: Inefficient use of resources, as it sends requests even when there’s no new data. 
+            Higher latency 
+            When to Use: When real-time updates are not critical, 
+            and it’s acceptable to have a delay between the data being available and the client receiving it.
  -->
 Data Store
 <!-- 
-                  New Feed//fetching point => put and orgnize(flatten the data, we don't want multi layer data) the data in store
+    New Feed//fetching point => put and orgnize(flatten the data, we don't want multi layer data) the data in store
                     Story
                      |feed_id
          |feed_entity   |comments            
@@ -409,7 +499,7 @@ Edge Case
                 //latency compare to websockets is only 60milliseconds which is fine for us
 
 -->
-Infinite scroll
+Infinity scroll
 <!-- 
 iff rech the sentinel call api load more//when fetching, creat affect of loading
     Top sentinel
@@ -437,17 +527,19 @@ Optimization
                 get the asset from the most closer location, to reduce the latency
                 cache these image inside enter the caching CDN insert this from the CDN
                 srcSet ship different images depending on the device
+                eg.AWS CloudFront
         Switch to HTTP2
             Multiplexing
                 solve the problem in HTTP1,which have five connections at max.
                 can load hundreds of resources in parallel
-        Bundle Splitting
+        Bundle Splittingcgac
                 Lasy load: split as Feed, Header, Vendor Libraries, Analystics Scripts
                     we can simplify the loading process, we can load all the resources at once
         Caching Strategies
-                both server and client can cache some date make it more prefermance
+                both server and client can cache some date make it more preformance
                     Apollo caching, buildin graphql: if receiving same request,set a time like 1hr 
                     batch request/group request if possible: example, collect all the tracking the cache and send it once
+        Batch Request
                     
     Rendering Perf
         Mbile Friendly
@@ -508,6 +600,7 @@ Accessibility & Security
         Keyboard Navigation
         Focus Management
         Descriptive Labels
+        Sematic
       Support different color schema - for people with color blindness
       All inputs and textareas and other elements should have aria-label
       Internationalization
@@ -563,7 +656,7 @@ Accessibility & Security
             By focusing on these principles, you can create a system that scales well across different languages and locales, providing a smooth experience for global users.
 
 Security
-    Cors can only access from specific domin
+    Cors can only access from specific domin,avoid ddos attack
     rate limiting
     XSS： bad people inject their own javascript in you webpage
         sanitize input: remove js to send to the database
@@ -573,6 +666,10 @@ Security
  -->
 Design Pattern 
 <!-- 
+MVC design pattern:
+    is a software architecture pattern that separates an application into 
+    three main components: Model, View, and Controller, making it easier to manage and maintain the codebase. 
+    It also allows for the reusability of components and promotes a more modular approach to software development.
 Creational Patterns/object creation mechanisms.
     Singleton
         Ensures a class has only one instance and provides a global point of access to that instance.
@@ -748,11 +845,14 @@ HTTP
 framework& api
 <!-- 
 Angular: 
-    Best suited for large-scale enterprise applications where a comprehensive, opinionated framework with built-in features is beneficial.
+    Best suited for large-scale enterprise applications where
+    a comprehensive, opinionated framework with built-in features is beneficial.
 React(is a library not framework): 
-    Ideal for applications that require flexibility and performance optimization. React’s component-based architecture and extensive ecosystem offer great power and adaptability.
+    flexibility and performance optimization.
+    React’s component-based architecture and extensive ecosystem offer great power and adaptability.
 Vue.js: 
-    Great for projects needing a balance of simplicity and functionality. Vue’s progressive framework approach and easy learning curve make it suitable for a wide range of applications.
+    Great for projects needing a balance of 
+    simplicity and functionality. Vue’s progressive framework approach and easy learning curve make it suitable for a wide range of applications.
 Next.js
     Automatic Code Splitting bundle 
         optimize web applications by loading only the necessary JavaScript for the page being accessed. 
@@ -896,7 +996,8 @@ Static Website Hosting:
     S3 can be used to host these files and serve them directly to users. S3 buckets are highly durable and scalable.
 CDN Integration: 
     Combine S3 with Amazon CloudFront, 
-    a Content Delivery Network (CDN) that caches static content globally to improve performance and reduce latency for users around the world.
+    a Content Delivery Network (CDN) that 
+    caches static content globally to improve performance and reduce latency for users around the world.
 Amazon EC2 (Elastic Compute Cloud):
     For dynamic websites, you can deploy the application on EC2 instances. 
     EC2 allows you to run virtual servers in the cloud with full control over the OS, software, and configuration.
@@ -930,4 +1031,14 @@ Fix 404 Errors: Ensure custom 404 pages and fix broken links regularly.
 Core Web Vitals: Optimize for LCP, FID, and CLS to improve user experience.
 
 Use HTTPS: Ensure your site is served securely over HTTPS. 
+-->
+Building full stack app
+<!-- 
+shadcn: ui library//create from here create reactjs app
+react/nextjs 
+plaid: banking library
+Appwrite: open source backend: authentication database messaging 
+chart.js: chart library
+Tailwind css:
+sentry:Identify, debug, and resolve
 -->
